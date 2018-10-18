@@ -28,6 +28,8 @@ private slots:
 
     void paintGraph1(QTableWidget* src, int N, int numbGraph);
 
+    void paintGraph2(QTableWidget* src, int N, int numbGraph);
+
     void on_exit_triggered();
 
     void on_startCount_2_clicked();
@@ -35,6 +37,14 @@ private slots:
     void on_stopCount_2_clicked();
 
     void on_clear_2_clicked();
+
+    void on_stopCount_3_clicked();
+
+    void on_clear_3_clicked();
+
+    void on_startCount_3_clicked();
+
+    void on_phaseport_clicked();
 
 private:
     Ui::MainWindow *ui;

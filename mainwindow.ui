@@ -1436,7 +1436,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="uxtab">
        <attribute name="title">
@@ -1470,7 +1470,7 @@
       </widget>
       <widget class="QWidget" name="uustab">
        <attribute name="title">
-        <string>u(u')</string>
+        <string>u'(u)</string>
        </attribute>
        <widget class="QCustomPlot" name="uusgraph" native="true">
         <property name="geometry">
@@ -2123,7 +2123,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="clear_5">
+     <widget class="QPushButton" name="clear_3">
       <property name="geometry">
        <rect>
         <x>210</x>
@@ -2136,7 +2136,7 @@
        <string>Очистить</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="stopCount_5">
+     <widget class="QPushButton" name="stopCount_3">
       <property name="geometry">
        <rect>
         <x>110</x>
@@ -2149,7 +2149,7 @@
        <string>Стоп</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="startCount_5">
+     <widget class="QPushButton" name="startCount_3">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -2162,7 +2162,7 @@
        <string>Пуск</string>
       </property>
      </widget>
-     <widget class="QTableWidget" name="tableWidget_5">
+     <widget class="QTableWidget" name="tableWidget_3">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -2172,7 +2172,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QCustomPlot" name="errGraph_5" native="true">
+     <widget class="QCustomPlot" name="errGraph_3" native="true">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -2183,6 +2183,19 @@
         <width>381</width>
         <height>191</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="phaseport">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>180</y>
+        <width>101</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Фазовый портрет</string>
       </property>
      </widget>
     </widget>

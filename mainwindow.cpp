@@ -10,11 +10,14 @@
 
 static model0 testmd;    //Модель
 static model1 md1;
+static model2 md2;
 
 int numbGraph = 0;
 int numbGraph1 = 0;
+int numbGraph2 = 0;
 
-void MainWindow::paintGraph0(QTableWidget* src, int N, int numbGraph){
+void MainWindow::paintGraph0(QTableWidget* src, int N, int numbGraph)
+{
 
     QVector<double> X(N);
     QVector<double> Y(N);
@@ -76,8 +79,8 @@ void MainWindow::paintGraph0(QTableWidget* src, int N, int numbGraph){
     ui->errGraph->replot();
 }
 
-
-void MainWindow::paintGraph1(QTableWidget* src, int N, int numbGraph){
+void MainWindow::paintGraph1(QTableWidget* src, int N, int numbGraph)
+{
 
     QVector<double> X(N);
     QVector<double> Y(N);
@@ -124,7 +127,63 @@ void MainWindow::paintGraph1(QTableWidget* src, int N, int numbGraph){
     ui->errGraph_2->replot();
 }
 
+void MainWindow::paintGraph2(QTableWidget* src, int N, int numbGraph)
+{
+    QVector<double> X(N);
+    QVector<double> V(N);
+    QVector<double> VS(N);
+    QVector<double> e(N);
 
+    QPen pen;
+
+
+    pen.setColor(Qt::GlobalColor(numbGraph+7));
+    for(int i = 0; i < N; i++){
+        X[i] = src->item(i,0)->text().toDouble();
+        V[i] = src->item(i,1)->text().toDouble();
+        VS[i] = src->item(i,2)->text().toDouble();
+        e[i] = src->item(i,5)->text().toDouble()*16;
+        }
+
+
+
+    ui->uxgraph->addGraph();
+    ui->usxgraph->addGraph();
+    ui->errGraph_3->addGraph();
+    ui->uxgraph->graph(numbGraph)->setData(X,V);
+    ui->uxgraph->graph(numbGraph)->setPen(pen);
+    ui->uxgraph->graph(numbGraph)->setName(QString("Числ. траект V(x) %1 (e)").arg(numbGraph+1));
+    ui->usxgraph->graph(numbGraph)->setData(X,VS);
+    ui->usxgraph->graph(numbGraph)->setPen(pen);
+    ui->usxgraph->graph(numbGraph)->setName(QString("Числ. траект V '(x) %1 (e)").arg(numbGraph+1));
+    ui->errGraph_3->graph(numbGraph)->setData(X,e);
+    ui->errGraph_3->graph(numbGraph)->setPen(pen);
+
+    ui->uxgraph->xAxis->setRange(X[0],X[N-1]);
+    ui->usxgraph->xAxis->setRange(X[0],X[N-1]);
+    ui->errGraph_3->xAxis->setRange(X[0],X[N-1]);
+
+    double minV = V[0], maxV = V[0], minE = e[0], maxE = e[0],minVS = VS[0],maxVS = VS[0];
+    for(int i = 1; i < N; i++)
+    {
+        if(V[i]<minV) minV = V[i];
+        if(V[i]>maxV) maxV = V[i];
+        if(VS[i]<minVS) minVS = VS[i];
+        if(VS[i]>maxVS) maxVS = VS[i];
+        if(e[i]<minE) minE = e[i];
+        if(e[i]>maxE) maxE = e[i];
+    }
+
+    ui->uxgraph->yAxis->setRange(minV, maxV);
+    ui->usxgraph->yAxis->setRange(minVS, maxVS);
+    ui->errGraph_3->yAxis->setRange(minE, maxE);
+    ui->uxgraph->legend->setVisible(true);
+    ui->usxgraph->legend->setVisible(true);
+
+    ui->uxgraph->replot();
+    ui->usxgraph->replot();
+    ui->errGraph_3->replot();
+}
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -134,12 +193,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("LabWork");
 
+
     //Инициализация таблицы
     ui->tableWidget->setColumnCount(10);
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << "x_i" << "v_i"<<"v2_i"<<"v_i - v2_i"<<"S"<<"h_i"<<"C1"<<"C2"<<"u_i"<<"|u_i - v_i|");
 
     ui->tableWidget_2->setColumnCount(8);
     ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "x_i" << "v_i"<<"v2_i"<<"v_i - v2_i"<<"S"<<"h_i"<<"C1"<<"C2");
+    
+    ui->tableWidget_3->setColumnCount(9);
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "x_i" << "v_i"<<"v'_i"<<"v_i - v2_i"<<"v'_i - v'2_i "<<"S"<<"h_i"<<"C1"<<"C2");
     //Инициализация основного графика
     ui->graph->xAxis->setLabel("x");
     ui->graph->yAxis->setLabel("V");
@@ -151,6 +214,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graph_2->setInteraction(QCP::iRangeZoom,true);
     ui->graph_2->setInteraction(QCP::iRangeDrag, true); // Включаем взаимодействие перетаскивания графика
 
+    ui->uxgraph->xAxis->setLabel("x");
+    ui->uxgraph->yAxis->setLabel("V");
+    ui->uxgraph->setInteraction(QCP::iRangeZoom,true);
+    ui->uxgraph->setInteraction(QCP::iRangeDrag, true); // Включаем взаимодействие перетаскивания графика
+
+    ui->usxgraph->xAxis->setLabel("x");
+    ui->usxgraph->yAxis->setLabel("V '");
+    ui->usxgraph->setInteraction(QCP::iRangeZoom,true);
+    ui->usxgraph->setInteraction(QCP::iRangeDrag, true); // Включаем взаимодействие перетаскивания графика
+
+    ui->uusgraph->xAxis->setLabel("V");
+    ui->uusgraph->yAxis->setLabel("V '");
+    ui->uusgraph->setInteraction(QCP::iRangeZoom,true);
+    ui->uusgraph->setInteraction(QCP::iRangeDrag, true); // Включаем взаимодействие перетаскивания графика
+
     //Инициализация графика погрешностей
     ui->errGraph->xAxis->setLabel("x");
     ui->errGraph->yAxis->setLabel("err");
@@ -161,10 +239,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->errGraph_2->yAxis->setLabel("err");
     ui->errGraph_2->setInteraction(QCP::iRangeZoom,true);
     ui->errGraph_2->setInteraction(QCP::iRangeDrag, true);
+
+    ui->errGraph_3->xAxis->setLabel("x");
+    ui->errGraph_3->yAxis->setLabel("err");
+    ui->errGraph_3->setInteraction(QCP::iRangeZoom,true);
+    ui->errGraph_3->setInteraction(QCP::iRangeDrag, true);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_exit_triggered()
+{
+   QApplication::quit();
 }
 
 
@@ -267,7 +355,6 @@ void MainWindow::on_stopCount_clicked()
     testmd.stop();
 }
 
-
 void MainWindow::on_clear_clicked()
 {
     ui->tableWidget->clear();
@@ -294,11 +381,6 @@ void MainWindow::on_clear_clicked()
     numbGraph = 0;
 }
 
-
-void MainWindow::on_exit_triggered()
-{
-   QApplication::quit();
-}
 
 
 
@@ -406,4 +488,161 @@ void MainWindow::on_clear_2_clicked()
     ui->errGraph_2->clearGraphs();
     ui->errGraph_2->replot();
     numbGraph1 = 0;
+}
+
+
+
+
+
+void MainWindow::on_startCount_3_clicked()
+{
+    QTableWidgetItem *tbl;
+    ui->tableWidget_3->clear();
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "x_i" << "v_i"<<"v'_i"<<"v_i - v2_i"<<"v'_i - v'2_i "<<"S"<<"h_i"<<"C1"<<"C2");
+    md2.set(ui->x0fd_3->text().toDouble(), ui->u0fd_3->text().toDouble(),ui->u0sfd_3->text().toDouble(),
+           ui->stepfd_3->text().toDouble(), ui->endfd_3->text().toDouble(),
+           ui->epsBrdfd_3->text().toDouble(), ui->epsCtrlfd_3->text().toDouble(),
+           ui->maxStepfd_3->text().toInt(),ui->isStepFixedch_3->isChecked(),ui->afd->text().toDouble(),ui->bfd->text().toDouble());
+    md2.start();
+
+
+    ui->tableWidget_3->setRowCount(50);
+    ui->Params_3->setDisabled(true);
+
+    tbl = new QTableWidgetItem(QString::number(md2.x));
+    ui->tableWidget_3->setItem(0,0,tbl);
+    tbl = new QTableWidgetItem(QString::number(md2.v1));
+    ui->tableWidget_3->setItem(0,1,tbl);
+    tbl = new QTableWidgetItem(QString::number(md2.v2));
+    ui->tableWidget_3->setItem(0,2,tbl);
+    tbl = new QTableWidgetItem("0");
+    ui->tableWidget_3->setItem(0,3,tbl);
+    tbl = new QTableWidgetItem("0");
+    ui->tableWidget_3->setItem(0,4,tbl);
+    tbl = new QTableWidgetItem("0");
+    ui->tableWidget_3->setItem(0,5,tbl);
+    tbl = new QTableWidgetItem(QString::number(md2.h));
+    ui->tableWidget_3->setItem(0,6,tbl);
+    tbl = new QTableWidgetItem("0");
+    ui->tableWidget_3->setItem(0,7,tbl);
+    tbl = new QTableWidgetItem("0");
+    ui->tableWidget_3->setItem(0,7,tbl);
+
+
+    int i = 1;
+    while(md2.isRun && i<md2.maxStep && md2.end-md2.x > md2.epsBrd)
+    {
+        if(ui->tableWidget_3->rowCount() == i)
+            ui->tableWidget_3->setRowCount(2*ui->tableWidget_3->rowCount());
+        md2.iterate(1);
+        tbl = new QTableWidgetItem(QString::number(md2.x));
+        ui->tableWidget_3->setItem(i,0,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.v1));
+        ui->tableWidget_3->setItem(i,1,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.v2));
+        ui->tableWidget_3->setItem(i,2,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.v12 - md2.v1));
+        ui->tableWidget_3->setItem(i,3,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.v22-md2.v2));
+        ui->tableWidget_3->setItem(i,4,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.s));
+        ui->tableWidget_3->setItem(i,5,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.hprev));
+        ui->tableWidget_3->setItem(i,6,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.stDwn));
+        ui->tableWidget_3->setItem(i,7,tbl);
+        tbl = new QTableWidgetItem(QString::number(md2.stUp));
+        ui->tableWidget_3->setItem(i,8,tbl);
+
+        QCoreApplication::processEvents();
+        i++;
+    }
+        ui->stepUp_3->setText(QString::number(md2.stUp));
+        ui->stepDwn_3->setText(QString::number(md2.stDwn));
+        ui->maxS_3->setText(QString::number(md2.maxS));
+        ui->minS_3->setText(QString::number(md2.minS));
+        ui->xmaxS_3->setText(QString::number(md2.xmaxS));
+        ui->xminS_3->setText(QString::number(md2.xminS));
+        ui->maxH_3->setText(QString::number(md2.maxH));
+        ui->minH_3->setText(QString::number(md2.minH));
+        ui->xmaxH_3->setText(QString::number(md2.xmaxH));
+        ui->xminH_3->setText(QString::number(md2.xminH));
+        ui->n_3->setText(QString::number(i));
+        ui->ebrd_3->setText(QString::number(md2.end-md2.x));
+        ui->Params_3->setDisabled(false);
+        md2.stop();
+
+
+       paintGraph2(ui->tableWidget_3,i,numbGraph2);
+       numbGraph2++;
+}
+
+void MainWindow::on_stopCount_3_clicked()
+{
+    md2.stop();
+}
+
+void MainWindow::on_clear_3_clicked()
+{
+    ui->tableWidget_3->clear();
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "x_i" << "v_i"<<"v'_i"<<"v_i - v2_i"<<"v'_i - v'2_i "<<"S"<<"h_i"<<"C1"<<"C2");
+    ui->stepUp_3->setText("");
+    ui->stepDwn_3->setText("");
+    ui->xmaxS_3->setText("");
+    ui->maxS_3->setText("");
+    ui->xminS_3->setText("");
+    ui->minS_3->setText("");
+    ui->xmaxH_3->setText("");
+    ui->maxH_3->setText("");
+    ui->xminH_3->setText("");
+    ui->minH_3->setText("");
+    ui->tableWidget_3->setRowCount(0); //устанавливаем количество строк в ноль
+    ui->uxgraph->clearGraphs();
+    ui->uxgraph->replot();
+    ui->usxgraph->clearGraphs();
+    ui->usxgraph->replot();
+    ui->uusgraph->clearGraphs();
+    ui->uusgraph->replot();
+    ui->errGraph_3->clearGraphs();
+    ui->errGraph_3->replot();
+    numbGraph2 = 0;
+}
+
+
+
+void MainWindow::on_phaseport_clicked()
+{
+    ui->uusgraph->clearGraphs();
+    ui->uusgraph->replot();
+    QVector<double> V(1000);
+    QVector<double> VS(1000);
+    QPen pen;
+    pen.setColor(Qt::GlobalColor(7));
+    ui->uusgraph->xAxis->setRange(-10,10);
+    ui->uusgraph->yAxis->setRange(-10,10);
+    double Probes[8] = {-5,-5,-5,5,5,5,5,-5};
+    for(int i =0; i<4; i++)
+    {
+        md2.set(0, Probes[2*i],Probes[2*i+1],
+               0.001, 1000,
+               1e-6, 1e-7,
+               1000,false,ui->afd->text().toDouble(),ui->bfd->text().toDouble());
+        md2.start();
+        V[0] = md2.v1;
+        VS[0] = md2.v2;
+        int j = 0;
+        while(j<md2.maxStep)
+        {
+            md2.iterate(1);
+            V[j] = md2.v1;
+            VS[j] = md2.v2;
+            QCoreApplication::processEvents();
+            j++;
+        }
+
+        ui->uusgraph->addGraph();
+        ui->uusgraph->graph(i)->setData(V,VS);
+        ui->uusgraph->graph(i)->setPen(pen);
+    }
+    ui->uusgraph->replot();
 }
