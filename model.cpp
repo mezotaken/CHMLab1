@@ -311,7 +311,7 @@ void model2::set(double i_x0,double i_u10, double i_u20,
 {
     x0 = i_x0;
     u10 = i_u10;
-    u10 = i_u20;
+    u20 = i_u20;
     h = i_h;
     end = i_end;
     epsBrd = i_epsBrd;
@@ -391,8 +391,8 @@ void model2::iterate(int dir)
 {
     if(x+h>end)
         h = end-x;
-    halfStepCountNext(v12,v22,h,x,v1,v2);
-    countNext(v11,v21,h,x,v1,v2);
+    halfStepCountNext(v12,v22,dir*h,x,v1,v2);
+    countNext(v11,v21,dir*h,x,v1,v2);
     s = sqrt(((v12-v11)*(v12-v11)+(v22-v21)*(v22-v21))/225);
     if(!isStepFixed)
     {

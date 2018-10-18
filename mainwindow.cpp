@@ -601,7 +601,7 @@ void MainWindow::on_clear_3_clicked()
     ui->uxgraph->replot();
     ui->usxgraph->clearGraphs();
     ui->usxgraph->replot();
-    ui->uusgraph->clearGraphs();
+    ui->uusgraph->clearPlottables();
     ui->uusgraph->replot();
     ui->errGraph_3->clearGraphs();
     ui->errGraph_3->replot();
@@ -612,37 +612,65 @@ void MainWindow::on_clear_3_clicked()
 
 void MainWindow::on_phaseport_clicked()
 {
-    ui->uusgraph->clearGraphs();
+    ui->uusgraph->clearPlottables();
     ui->uusgraph->replot();
-    QVector<double> V(1000);
-    QVector<double> VS(1000);
+
+    QCPCurve* test[400];
+    QVector<double> X(100);
+    QVector<double> V(100);
+    QVector<double> VS(100);
     QPen pen;
     pen.setColor(Qt::GlobalColor(7));
     ui->uusgraph->xAxis->setRange(-10,10);
     ui->uusgraph->yAxis->setRange(-10,10);
-    double Probes[8] = {-5,-5,-5,5,5,5,5,-5};
-    for(int i =0; i<4; i++)
+    int count = 0;
+    for(int i =-10; i<11; i+=2)
+        for(int k = -10; k<11;k+=2)
     {
-        md2.set(0, Probes[2*i],Probes[2*i+1],
+        md2.set(0, i,k,
                0.001, 1000,
                1e-6, 1e-7,
-               1000,false,ui->afd->text().toDouble(),ui->bfd->text().toDouble());
+               100,false,ui->afd->text().toDouble(),ui->bfd->text().toDouble());
         md2.start();
+        X[0] = md2.x;
         V[0] = md2.v1;
         VS[0] = md2.v2;
-        int j = 0;
+        int j = 1;
         while(j<md2.maxStep)
         {
             md2.iterate(1);
+            X[j] = md2.x;
             V[j] = md2.v1;
             VS[j] = md2.v2;
             QCoreApplication::processEvents();
             j++;
         }
+        test[count] = new QCPCurve(ui->uusgraph->xAxis, ui->uusgraph->yAxis);
+        test[count]->setData(X,V,VS);
+        test[count]->setPen(pen);
+        count++;
 
-        ui->uusgraph->addGraph();
-        ui->uusgraph->graph(i)->setData(V,VS);
-        ui->uusgraph->graph(i)->setPen(pen);
+        md2.set(0,i,k,
+               0.001, 1000,
+               1e-6, 1e-7,
+               100,false,ui->afd->text().toDouble(),ui->bfd->text().toDouble());
+        md2.start();
+        X[0] = md2.x;
+        V[0] = md2.v1;
+        VS[0] = md2.v2;
+        j = 1;
+        while(j<md2.maxStep)
+        {
+            md2.iterate(-1);
+            X[j] = md2.x;
+            V[j] = md2.v1;
+            VS[j] = md2.v2;
+            QCoreApplication::processEvents();
+            j++;
+        }
+        test[count] = new QCPCurve(ui->uusgraph->xAxis, ui->uusgraph->yAxis);
+        test[count]->setData(X,V,VS);
+        test[count]->setPen(pen);
     }
     ui->uusgraph->replot();
 }
